@@ -16,8 +16,8 @@ var issuer = 'auth.yoursite.com';
 var audience = 'yoursite.com';
 
 // unauthenticated
-var authRouter = Router({ prefix: '/auth' });
-authRouter.post('/login', function *() {
+var authRouter = Router({ prefix: '/authenticate' });
+authRouter.post('/', function *() {
     var params = this.request.body;
     var user = userStore.find(params.email);
 
@@ -91,6 +91,21 @@ secureRouter.use(function*(next){
         this.status = 401;
         this.body = 'Unauthorized';
     }
+});
+secureRouter.post('/user', function *() {
+    var params = this.request.body;
+    var user = userStore.find(params.email);
+
+    if(user !== null) {
+        this.status = 409;
+        this.body = 'User already exists';
+        return;
+    }
+
+    userStore.insert(params.email, params.password);
+
+    this.status = 201;
+    this.body = 'User created';
 });
 secureRouter.get('/hello', function *() {
     this.status = 200;

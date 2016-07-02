@@ -17,10 +17,13 @@ class UserStore {
     }
 
     insert(email, password) {
-        this.users.push({
+        var user = {
             email: email,
             password: bcrypt.hashSync(password, null, null)
-        });
+        };
+        this.users.push(user);
+        
+        return user;
     }
 
     comparePassword(plainText, hash) {
